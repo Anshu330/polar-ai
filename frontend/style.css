@@ -294,12 +294,18 @@ nav a.active {
 
 /* ================= MAP ================= */
 
+
 #map {
     height: 420px;
     width: 100%;
-
     border-radius: 0 0 12px 12px;
+    background: #08121d;
 }
+
+#map .leaflet-tile {
+    outline: 1px solid transparent;
+}
+
 
 .leaflet-container {
     background: #08121d;

@@ -15,18 +15,27 @@ const map = L.map("map", {
     maxZoom: 7
 });
 
+setTimeout(() => {
+    map.invalidateSize();
+}, 300);
+
 // Stores the current predicted trajectory line
 let predictionLine = null;
 let predictionMarker = null;
 
 
-// Dark map tiles
+
+
+/* OpenStreetMap tiles */
 L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
     {
-        attribution: "&copy; OpenStreetMap contributors"
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
     }
 ).addTo(map);
+
+
 
 
 // ========================================
