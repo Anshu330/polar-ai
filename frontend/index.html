@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>POLAR AI | Antarctic Decision Support</title>
+
+    <!-- Leaflet Map CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">❄</div>
+            <div>
+                <h2>POLAR AI</h2>
+                <span>Antarctic Intelligence</span>
+            </div>
+        </div>
+
+        <nav>
+            <a href="#" class="active">◉ Dashboard</a>
+            <a href="#map-section">◈ Iceberg Map</a>
+            <a href="#prediction">⌁ Predictions</a>
+            <a href="#risk">⚠ Risk Analysis</a>
+            <a href="#data">▦ Iceberg Data</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <p>DATA SOURCES</p>
+            <span>◉ Sentinel-1</span>
+            <span>◉ USNIC / BYU</span>
+            <span>◉ Copernicus</span>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div>
+                <h1>Antarctic Decision Support</h1>
+                <p>AI-powered iceberg monitoring & navigation intelligence</p>
+            </div>
+
+            <div class="status">
+                <span class="status-dot"></span>
+                SYSTEM ONLINE
+            </div>
+
+        </header>
+
+
+        <!-- KPI CARDS -->
+        <section class="kpi-grid">
+
+            <div class="card kpi">
+                <div class="kpi-icon">🧊</div>
+                <div>
+                    <span>Tracked Icebergs</span>
+                    <h2>39</h2>
+                </div>
+            </div>
+
+            <div class="card kpi">
+                <div class="kpi-icon">📅</div>
+                <div>
+                    <span>Latest Observation</span>
+                    <h2>Day 235</h2>
+                </div>
+            </div>
+
+            <div class="card kpi">
+                <div class="kpi-icon">🛰️</div>
+                <div>
+                    <span>Satellite Source</span>
+                    <h2>Sentinel-1</h2>
+                </div>
+            </div>
+
+            <div class="card kpi warning">
+                <div class="kpi-icon">⚠</div>
+                <div>
+                    <span>Risk Areas</span>
+                    <h2>03</h2>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- MAP SECTION -->
+        <section id="map-section" class="content-grid">
+
+            <div class="card map-card">
+
+                <div class="section-header">
+                    <div>
+                        <h2>🧊 Antarctic Iceberg Tracking</h2>
+                        <p>Current iceberg positions</p>
+                    </div>
+
+                    <div class="legend">
+                        <span>
+                            <i class="blue-dot"></i>
+                            Iceberg
+                        </span>
+
+                        <span>
+                            <i class="red-dot"></i>
+                            Risk Area
+                        </span>
+                    </div>
+                </div>
+
+                <div id="map"></div>
+
+            </div>
+
+
+            <!-- SELECTED ICEBERG -->
+            <div class="card iceberg-info">
+
+                <h2>Selected Iceberg</h2>
+
+                <div class="selected-id">
+                    <span id="selectedName">A76C</span>
+                    <span class="badge">TRACKED</span>
+                </div>
+
+                <div class="info-row">
+                    <span>Latitude</span>
+                    <strong id="selectedLat">-53.5500°</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Longitude</span>
+                    <strong id="selectedLon">-29.9500°</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Observation</span>
+                    <strong id="selectedDay">Day 235</strong>
+                </div>
+
+                <hr>
+
+                <h3>Movement Status</h3>
+
+                <div class="movement">
+                    <span class="arrow">↗</span>
+
+                    <div>
+                        <strong>Moving Northeast</strong>
+                        <p>Estimated movement</p>
+                    </div>
+                </div>
+
+                <button class="predict-btn" onclick="showPrediction()">
+                    Run AI Prediction
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- PREDICTION -->
+        <section id="prediction" class="card prediction-card">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>🤖 AI Iceberg Trajectory Prediction</h2>
+                    <p>Prototype prediction using environmental conditions</p>
+                </div>
+
+                <span class="ai-badge">AI MODEL</span>
+
+            </div>
+
+            <div class="prediction-grid">
+
+                <div class="prediction-box">
+                    <span>Current Position</span>
+                    <strong id="currentPosition">-53.55°, -29.95°</strong>
+                </div>
+
+                <div class="prediction-box">
+                    <span>Predicted Latitude</span>
+                    <strong id="predLat">-53.20°</strong>
+                </div>
+
+                <div class="prediction-box">
+                    <span>Predicted Longitude</span>
+                    <strong id="predLon">-29.10°</strong>
+                </div>
+
+                <div class="prediction-box">
+                    <span>Confidence</span>
+                    <strong class="green">87%</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- RISK ANALYSIS -->
+        <section id="risk" class="card risk-card">
+
+            <div class="section-header">
+                <div>
+                    <h2>⚠ Navigation Risk Analysis</h2>
+                    <p>Potential iceberg collision zones</p>
+                </div>
+            </div>
+
+            <div class="risk-grid">
+
+                <div class="risk-level high">
+                    <span>HIGH RISK</span>
+                    <h2>03</h2>
+                    <p>Iceberg proximity zones</p>
+                </div>
+
+                <div class="risk-level medium">
+                    <span>MEDIUM RISK</span>
+                    <h2>07</h2>
+                    <p>Sea-ice affected areas</p>
+                </div>
+
+                <div class="risk-level low">
+                    <span>LOW RISK</span>
+                    <h2>29</h2>
+                    <p>Currently monitored</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- DATA TABLE -->
+        <section id="data" class="card table-card">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>📊 Tracked Icebergs</h2>
+                    <p>Latest available observations</p>
+                </div>
+
+                <input
+                    type="text"
+                    id="search"
+                    placeholder="Search iceberg..."
+                    onkeyup="searchTable()"
+                >
+
+            </div>
+
+            <div class="table-container">
+
+                <table id="icebergTable">
+
+                    <thead>
+                        <tr>
+                            <th>Iceberg</th>
+                            <th>Longitude</th>
+                            <th>Latitude</th>
+                            <th>Observation</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr onclick="selectIceberg('A76C', -53.5500, -29.9500)">
+                            <td>A76C</td>
+                            <td>-29.9500°</td>
+                            <td>-53.5500°</td>
+                            <td>235</td>
+                            <td><span class="table-status">Tracked</span></td>
+                        </tr>
+
+                        <tr onclick="selectIceberg('A81', -58.6000, -50.6667)">
+                            <td>A81</td>
+                            <td>-50.6667°</td>
+                            <td>-58.6000°</td>
+                            <td>235</td>
+                            <td><span class="table-status">Tracked</span></td>
+                        </tr>
+
+                        <tr onclick="selectIceberg('A83', -60.9333, -50.8667)">
+                            <td>A83</td>
+                            <td>-50.8667°</td>
+                            <td>-60.9333°</td>
+                            <td>233</td>
+                            <td><span class="table-status">Tracked</span></td>
+                        </tr>
+
+                        <tr onclick="selectIceberg('A84', -71.7000, -102.2500)">
+                            <td>A84</td>
+                            <td>-102.2500°</td>
+                            <td>-71.7000°</td>
+                            <td>235</td>
+                            <td><span class="table-status">Tracked</span></td>
+                        </tr>
+
+                        <tr onclick="selectIceberg('A85', -63.7667, -53.9500)">
+                            <td>A85</td>
+                            <td>-53.9500°</td>
+                            <td>-63.7667°</td>
+                            <td>225</td>
+                            <td><span class="table-status">Tracked</span></td>
+                        </tr>
+
+                        <tr onclick="selectIceberg('B09B', -66.0500, 143.2167)">
+                            <td>B09B</td>
+                            <td>143.2167°</td>
+                            <td>-66.0500°</td>
+                            <td>235</td>
+                            <td><span class="table-status">Tracked</span></td>
+                        </tr>
+
+                        <tr onclick="selectIceberg('B09G', -68.2000, 41.4333)">
+                            <td>B09G</td>
+                            <td>41.4333°</td>
+                            <td>-68.2000°</td>
+                            <td>235</td>
+                            <td><span class="table-status">Tracked</span></td>
+                        </tr>
+
+                        <tr onclick="selectIceberg('B22A', -69.3833, 170.9500)">
+                            <td>B22A</td>
+                            <td>170.9500°</td>
+                            <td>-69.3833°</td>
+                            <td>235</td>
+                            <td><span class="table-status">Tracked</span></td>
+                        </tr>
+
+                        <tr onclick="selectIceberg('B22F', -67.1167, -176.4333)">
+                            <td>B22F</td>
+                            <td>-176.4333°</td>
+                            <td>-67.1167°</td>
+                            <td>235</td>
+                            <td><span class="table-status">Tracked</span></td>
+                        </tr>
+
+                        <tr onclick="selectIceberg('C15', -65.8333, 143.0833)">
+                            <td>C15</td>
+                            <td>143.0833°</td>
+                            <td>-65.8333°</td>
+                            <td>235</td>
+                            <td><span class="table-status">Tracked</span></td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <footer>
+            <p>POLAR AI • Antarctic Decision Support Platform</p>
+            <span>Prototype • For Academic / Research Demonstration</span>
+        </footer>
+
+    </main>
+
+
+    <!-- Leaflet JS -->
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+    </script>
+
+    <!-- Our JS -->
+    <script src="script.js"></script>
+
+</body>
+</html>
