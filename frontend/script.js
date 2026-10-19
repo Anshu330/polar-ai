@@ -67,6 +67,57 @@ const icebergIcon = L.divIcon({
 // ========================================
 // 3. GET ICEBERG DATA FROM BACKEND
 // ========================================
+async function loadDashboardStats() {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/stats");
+
+        if (!response.ok) {
+            throw new Error("Failed to load dashboard statistics");
+        }
+
+        const stats = await response.json();
+
+        console.log("Dashboard stats:", stats);
+
+        // Update the tracked iceberg count
+        const icebergCount = document.querySelector(
+            ".kpi-grid .card.kpi h2"
+        );
+
+        if (icebergCount) {
+            icebergCount.textContent = stats.total_icebergs;
+        }
+        const latestObservation = document.getElementById(
+    "latest-observation"
+);
+
+if (latestObservation) {
+    latestObservation.textContent =
+        `Day ${stats.latest_observation}`;
+}
+// ADD THE NEW RISK CODE HERE
+const riskResponse = await fetch("http://127.0.0.1:8000/risk");
+
+if (!riskResponse.ok) {
+    throw new Error("Failed to load risk statistics");
+}
+
+const riskData = await riskResponse.json();
+
+const riskCount = document.getElementById("risk-count");
+
+if (riskCount) {
+    riskCount.textContent = String(
+        riskData.potential_exposure_count
+    ).padStart(2, "0");
+}
+
+    } catch (error) {
+        console.error("Could not load dashboard stats:", error);
+    }
+}
+
+loadDashboardStats();
 
 fetch("http://127.0.0.1:8000/icebergs")
 
@@ -570,3 +621,32 @@ console.log(
     "Connecting to:",
     "http://127.0.0.1:8000/icebergs"
 );
+
+async function updateDashboardStats() {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/icebergs");
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch iceberg data");
+        }
+
+        const icebergs = await response.json();
+
+        // Update the total number of icebergs
+        document.getElementById("tracked-icebergs-count").textContent =
+            icebergs.length;
+
+        // Update the latest observation day
+        const latestDay = Math.max(
+            ...icebergs.map(iceberg => Number(iceberg.observation_day) || 0)
+        );
+
+        document.getElementById("latest-observation-day").textContent =
+            `Day ${latestDay}`;
+
+    } catch (error) {
+        console.error("Could not update dashboard statistics:", error);
+    }
+}
+
+updateDashboardStats();
