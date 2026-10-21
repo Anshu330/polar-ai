@@ -67,19 +67,39 @@ const icebergIcon = L.divIcon({
 // ========================================
 // 3. GET ICEBERG DATA FROM BACKEND
 // ========================================
-async function loadDashboardStats() {
-    try {
-        const response = await fetch("http://127.0.0.1:8000/stats");
 
-        if (!response.ok) {
-            throw new Error("Failed to load dashboard statistics");
+async function loadDashboardStats() {
+    const status = document.getElementById("dashboard-status");
+    const errorBox = document.getElementById("dashboard-error");
+    const errorText = document.getElementById("dashboard-error-text");
+    const retryButton = document.getElementById("retry-dashboard");
+
+    if (status) {
+        status.hidden = false;
+        status.textContent = "Loading dashboard data...";
+    }
+
+    if (errorBox) {
+        errorBox.hidden = true;
+    }
+
+    if (retryButton) {
+        retryButton.disabled = true;
+    }
+
+    try {
+        const [statsResponse, riskResponse] = await Promise.all([
+            fetch("http://127.0.0.1:8000/stats"),
+            fetch("http://127.0.0.1:8000/risk")
+        ]);
+
+        if (!statsResponse.ok || !riskResponse.ok) {
+            throw new Error("Failed to load dashboard data");
         }
 
-        const stats = await response.json();
+        const stats = await statsResponse.json();
+        const riskData = await riskResponse.json();
 
-        console.log("Dashboard stats:", stats);
-
-        // Update the tracked iceberg count
         const icebergCount = document.querySelector(
             ".kpi-grid .card.kpi h2"
         );
@@ -87,35 +107,60 @@ async function loadDashboardStats() {
         if (icebergCount) {
             icebergCount.textContent = stats.total_icebergs;
         }
+
         const latestObservation = document.getElementById(
-    "latest-observation"
-);
+            "latest-observation"
+        );
 
-if (latestObservation) {
-    latestObservation.textContent =
-        `Day ${stats.latest_observation}`;
-}
-// ADD THE NEW RISK CODE HERE
-const riskResponse = await fetch("http://127.0.0.1:8000/risk");
+        if (latestObservation) {
+            latestObservation.textContent =
+                `Day ${stats.latest_observation}`;
+        }
 
-if (!riskResponse.ok) {
-    throw new Error("Failed to load risk statistics");
-}
+        const riskCount = document.getElementById("risk-count");
 
-const riskData = await riskResponse.json();
+        if (riskCount) {
+            riskCount.textContent = String(
+                riskData.potential_exposure_count
+            ).padStart(2, "0");
+        }
 
-const riskCount = document.getElementById("risk-count");
+        if (status) {
+            status.hidden = true;
+        }
 
-if (riskCount) {
-    riskCount.textContent = String(
-        riskData.potential_exposure_count
-    ).padStart(2, "0");
-}
+        console.log("Dashboard data loaded:", stats, riskData);
 
     } catch (error) {
-        console.error("Could not load dashboard stats:", error);
+        console.error("Could not load dashboard data:", error);
+
+        if (status) {
+            status.hidden = true;
+        }
+
+        if (errorBox) {
+            errorBox.hidden = false;
+            errorBox.style.display = "flex";
+        }
+
+        if (errorText) {
+            errorText.textContent =
+                "Unable to load dashboard data. Check that the backend is running.";
+        }
+
+    } finally {
+        if (retryButton) {
+            retryButton.disabled = false;
+        }
     }
 }
+
+const retryButton = document.getElementById("retry-dashboard");
+
+if (retryButton) {
+    retryButton.addEventListener("click", loadDashboardStats);
+}
+
 
 loadDashboardStats();
 
@@ -532,11 +577,16 @@ console.log("Predicted trajectory drawn on map.");
         ).innerText = "-29.10°";
 
 
-        button.innerText =
-            "Prediction Generated ✓";
+        
+const predictButton = document.querySelector(
+    ".selected-iceberg button"
+);
 
+if (predictButton) {
+    predictButton.innerText = "Prediction Generated ✓";
+    predictButton.disabled = false;
+}
 
-        button.disabled = false;
 
     }, 1000);
 
@@ -632,21 +682,29 @@ async function updateDashboardStats() {
 
         const icebergs = await response.json();
 
-        // Update the total number of icebergs
-        document.getElementById("tracked-icebergs-count").textContent =
-            icebergs.length;
+     
+const icebergCountElement = document.getElementById("tracked-icebergs-count");
 
-        // Update the latest observation day
-        const latestDay = Math.max(
-            ...icebergs.map(iceberg => Number(iceberg.observation_day) || 0)
-        );
+if (icebergCountElement) {
+    icebergCountElement.textContent = icebergs.length;
+}
 
-        document.getElementById("latest-observation-day").textContent =
-            `Day ${latestDay}`;
+const latestDay = Math.max(
+    ...icebergs.map(iceberg => Number(iceberg.observation_day) || 0)
+);
 
-    } catch (error) {
-        console.error("Could not update dashboard statistics:", error);
-    }
+const latestDayElement = document.getElementById("latest-observation-day");
+
+if (latestDayElement) {
+    latestDayElement.textContent = `Day ${latestDay}`;
+}
+
+
+  } catch (error) {
+    console.error("Could not update dashboard statistics:", error);
+
+
+}
 }
 
 updateDashboardStats();

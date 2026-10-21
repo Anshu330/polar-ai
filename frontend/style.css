@@ -240,7 +240,8 @@ nav a.active {
 }
 
 .map-card {
-    min-height: 500px;
+    min-height: 0;
+    height: fit-content;
 }
 
 .section-header {
@@ -450,17 +451,24 @@ nav a.active {
 
 .prediction-card {
     margin-bottom: 20px;
+    min-width: 0;
+    overflow: hidden;
+    transition: border-color 0.2s ease;
+}
+
+.prediction-card:hover {
+    border-color: #28506c;
 }
 
 .prediction-grid {
     display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
-
     padding: 0 20px 20px;
+}
+
+.prediction-grid > * {
+    min-width: 0;
 }
 
 .prediction-box {
@@ -589,46 +597,44 @@ nav a.active {
     overflow-x: auto;
 }
 
+
 table {
     width: 100%;
-
     border-collapse: collapse;
+    text-align: left;
+    font-size: 13px;
+}
+
+thead {
+    background: #10263a;
 }
 
 th {
-    text-align: left;
-
-    color: #5e778d;
-
-    font-size: 10px;
-
-    font-weight: normal;
-
-    padding: 12px 20px;
-
-    border-top: 1px solid #152d41;
-    border-bottom: 1px solid #152d41;
+    padding: 14px 16px;
+    color: #8ba6bd;
+    font-weight: 600;
+    white-space: nowrap;
+    border-bottom: 1px solid #244158;
 }
 
 td {
-    padding: 13px 20px;
-
-    font-size: 11px;
-
-    border-bottom: 1px solid #132a3d;
-
-    color: #b5c8d7;
+    padding: 14px 16px;
+    color: #dce9f5;
+    border-bottom: 1px solid #172e42;
 }
 
 tbody tr {
-    cursor: pointer;
-
-    transition: 0.15s;
+    transition: background 0.2s ease;
 }
 
 tbody tr:hover {
     background: #10263a;
 }
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
 
 .table-status {
     color: #5bd59c;
@@ -715,3 +721,169 @@ footer {
         gap: 8px;
     }
 }
+
+
+.status-message {
+    color: #9fb3c8;
+    font-size: 13px;
+    margin: 0 0 12px;
+}
+
+.error-message {
+    margin: 12px 0;
+    padding: 12px 16px;
+    border: 1px solid #ef4444;
+    border-radius: 8px;
+    background: rgba(127, 29, 29, 0.2);
+    color: #fecaca;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.error-message[hidden] {
+    display: none;
+}
+
+.error-message button {
+    padding: 8px 12px;
+    border: 1px solid #fca5a5;
+    border-radius: 6px;
+    background: transparent;
+    color: #fecaca;
+    cursor: pointer;
+}
+
+.error-message button:hover {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+
+/* POLAR AI - Dashboard UI polish */
+
+.card,
+.kpi,
+#map {
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.kpi:hover {
+    border-color: #24516d;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+    transform: translateY(-2px);
+}
+
+button {
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card,
+    .kpi,
+    #map,
+    button {
+        transition: none;
+    }
+
+    button:active {
+        transform: none;
+    }
+}
+
+
+/* Responsive layout for smaller screens */
+
+@media (max-width: 1100px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .sidebar nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .sidebar-bottom {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 20px 14px;
+        min-width: 0;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .topbar h1 {
+        font-size: 23px;
+    }
+
+    .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .content-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .map-card {
+        min-width: 0;
+    }
+
+    #map {
+        height: 350px;
+    }
+
+    .iceberg-info {
+        min-width: 0;
+    }
+
+    .predict-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+   #map {
+    height: 260px;
+    min-height: 260px;
+}
+
+    .kpi {
+        padding: 14px;
+    }
+}
+
+
